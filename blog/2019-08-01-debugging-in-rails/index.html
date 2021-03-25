@@ -67,11 +67,10 @@
 <meta property="og:description" content="This week I got to dig into some debugging that I really enjoyed. Well, if you had asked me in the middle of it I might not have been having fun, but I found a solution! I used a handful of tools to approach debugging and they all gave me a little bit more information to solve the problem that I didn&rsquo;t have before.
 Here is a bit about each tool and what I find useful about it." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://cassidy.codes/blog/2019-08-01-debugging-in-rails/" />
-
-<meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png" />
+<meta property="og:url" content="https://cassidy.codes/blog/2019-08-01-debugging-in-rails/" /><meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/><meta property="article:section" content="blog" />
 <meta property="article:published_time" content="2019-08-01T22:23:11-04:00" />
 <meta property="article:modified_time" content="2019-08-02T20:07:23-04:00" /><meta property="og:site_name" content="Cassidy K" />
+
 
     <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/>
@@ -89,11 +88,7 @@ Here is a bit about each tool and what I find useful about it."/>
 				<a href="https://cassidy.codes/">
 					<h2 class="nav-title">Cassidy K</h2>
 				</a>
-				<ul>
-    <li><a href="https://github.com/cassidycodes">GitHub</a></li>
-    <li><a href="https://twitter.com/cassidycodes">Twitter</a></li>
-</ul>
-
+				
 			</div>
 		</nav>
 
@@ -113,16 +108,10 @@ Here is a bit about each tool and what I find useful about it."/>
 
 		
 
-		
-
-<p>This week I got to dig into some debugging that I really enjoyed. Well, if you had asked me in the middle of it I might not have been having fun, but I found a solution! I used a handful of tools to approach debugging and they all gave me a little bit more information to solve the problem that I didn&rsquo;t have before.</p>
-
+		<p>This week I got to dig into some debugging that I really enjoyed. Well, if you had asked me in the middle of it I might not have been having fun, but I found a solution! I used a handful of tools to approach debugging and they all gave me a little bit more information to solve the problem that I didn&rsquo;t have before.</p>
 <p>Here is a bit about each tool and what I find useful about it. Let me know if you have other Ruby or Rails debugging tips!</p>
-
 <h2 id="pry">Pry!</h2>
-
 <p><a href="https://pryrepl.org/">Pry</a> is an amazing tool for Ruby. It gives you all kinds of tools like <code>? my_method</code> to show you documentation or <code>ls MyObject</code> to show you all the methods you can call on an object. You can even use <code>cd</code> to move into an object!</p>
-
 <p>Here is a tiny class with a pry binding in it to show you how a few of the methods work.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">User</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">initialize</span><span style="color:#111">(</span><span style="color:#111">name</span><span style="color:#111">)</span>
@@ -133,8 +122,8 @@ Here is a bit about each tool and what I find useful about it."/>
     <span style="color:#111">binding</span><span style="color:#f92672">.</span><span style="color:#111">pry</span>
     <span style="color:#111">@name</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>I started up from the command line and initialized a new user. When I call the <code>name</code> method, Pry prints out the lines around the binding and gives you an interactive prompt.</p>
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>I started up from the command line and initialized a new user. When I call the <code>name</code> method, Pry prints out the lines around the binding and gives you an interactive prompt.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">[1] pry(main)&gt; me = User.new(&#39;cassidy&#39;)
 =&gt; #&lt;User:0x00007fd807ed87a8 @name=&#34;cassidy&#34;&gt;
 [2] pry(main)&gt; me.name
@@ -145,11 +134,11 @@ From: (pry) @ line 9 User#name:
      8:   binding.pry
  =&gt;  9:   @name
     10: end
-[1] pry(#&lt;User&gt;)&gt; </code></pre></div>
-<p>At this point I could type <code>@name</code> to see what the value of my instance variable is.</p>
+[1] pry(#&lt;User&gt;)&gt; 
+</code></pre></div><p>At this point I could type <code>@name</code> to see what the value of my instance variable is.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">[1] pry(#&lt;User&gt;)&gt; @name
-=&gt; &#34;cassidy&#34;</code></pre></div>
-<p>Ah good, it&rsquo;s what I expected. Let&rsquo;s use <code>step</code> to move the execution forward one more frame.</p>
+=&gt; &#34;cassidy&#34;
+</code></pre></div><p>Ah good, it&rsquo;s what I expected. Let&rsquo;s use <code>step</code> to move the execution forward one more frame.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">[2] pry(#&lt;User&gt;)&gt; step
 From: /Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/pry-0.12.2/lib/pry/pry_instance.rb @ line 388 Pry#evaluate_ruby:
 
@@ -164,8 +153,8 @@ From: /Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/pry-0.12.2/l
     391:   exec_hook :after_eval, result, self
     392: end
 
-[1] pry(#&lt;Pry&gt;)&gt;</code></pre></div>
-<p>Neat! It looks like the next frame is Pry itself! Ever wonder how pry works? Check out all the methods that are here!</p>
+[1] pry(#&lt;Pry&gt;)&gt;
+</code></pre></div><p>Neat! It looks like the next frame is Pry itself! Ever wonder how pry works? Check out all the methods that are here!</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">[1] pry(#&lt;Pry&gt;)&gt; ls
 Pry#methods:
   add_sticky_local  commands=            eval                 extra_sticky_locals=   last_dir                   memory_size   print                   quiet?             should_print?
@@ -180,8 +169,8 @@ Pry#methods:
 instance variables:
   @backtrace      @command_state  @custom_completions  @indent      @last_exception  @last_result_is_exception  @prompt_stack  @suppress_output
   @binding_stack  @config         @eval_string         @input_ring  @last_result     @output_ring               @stopped
-locals: _  __  _dir_  _ex_  _file_  _in_  _out_  _pry_  code  result</code></pre></div>
-<p>I&rsquo;m not going to dig around in there too much, but lets see what <code>next</code> does.</p>
+locals: _  __  _dir_  _ex_  _file_  _in_  _out_  _pry_  code  result
+</code></pre></div><p>I&rsquo;m not going to dig around in there too much, but lets see what <code>next</code> does.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">From: /Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/pry-0.12.2/lib/pry/pry_instance.rb @ line 390 Pry#evaluate_ruby:
 
     383: def evaluate_ruby(code)
@@ -193,29 +182,23 @@ locals: _  __  _dir_  _ex_  _file_  _in_  _out_  _pry_  code  result</code></pre
     389: ensure
  =&gt; 390:   update_input_history(code)
     391:   exec_hook :after_eval, result, self
-    392: end</code></pre></div>
-<p>It moved us one line forward in the current frame. So behind the scenes, it executed all of line 38 and returned us to this same stack frame because there was more code to execute here. Neat!</p>
-
+    392: end
+</code></pre></div><p>It moved us one line forward in the current frame. So behind the scenes, it executed all of line 38 and returned us to this same stack frame because there was more code to execute here. Neat!</p>
 <p>Okay, enough fiddling around with pry. Let&rsquo;s type <code>continue</code> and we&rsquo;ll finally see the result of the <code>name</code> method.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text." data-lang="text.">[1] pry(#&lt;Pry&gt;)&gt; continue
-=&gt; &#34;cassidy&#34;</code></pre></div>
-<h2 id="bundle-open">Bundle Open</h2>
-
+<pre><code class="language-text." data-lang="text.">[1] pry(#&lt;Pry&gt;)&gt; continue
+=&gt; &quot;cassidy&quot;
+</code></pre><h2 id="bundle-open">Bundle Open</h2>
 <p>What happens when you start stepping through a call stack in pry and you find yourself wandering around stack frames that belong to a Ruby Gem you&rsquo;re using. When this happens to me I like to go checkout what the code actually looks like in that gem with <code>bundle open</code>.</p>
-
 <p>Here&rsquo;s the error I was working on today. You&rsquo;ll see that the error is raised in a third party library. I might have made a mistake that caused it, but my mistake is so far down the call stack that I don&rsquo;t see it!</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">2019-08-01T21:42:43.628Z 34126 TID-ower3a8uc WARN: NoMethodError: undefined method `body&#39; for nil:NilClass
 2019-08-01T21:42:43.628Z 34126 TID-ower3a8uc WARN: /Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/carrierwave-0.10.0/lib/carrierwave/storage/fog.rb:228:in `read&#39;
 /Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/carrierwave-0.10.0/lib/carrierwave/uploader/cache.rb:77:in `sanitized_file&#39;
 /Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/carrierwave-0.10.0/lib/carrierwave/uploader/cache.rb:116:in `cache!&#39;
 /Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/carrierwave-0.10.0/lib/carrierwave/uploader/versions.rb:226:in `recreate_versions!&#39;
-/Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/carrierwave_backgrounder-0.4.2/lib/backgrounder/workers/process_asset.rb:12:in `perform&#39;`</code></pre></div>
-<p>I had no idea what was <code>nil</code> here that shouldn&rsquo;t be so I ran <code>bundle open carrierwave</code> to open the gem&rsquo;s codebase in a text editor. Once I was there, I found the line where the error was raised and put a <code>binding.pry</code> in it so I could get some better insight as to what was going on.</p>
-
+/Users/cassidy/.rbenv/versions/2.3.8/lib/ruby/gems/2.3.0/gems/carrierwave_backgrounder-0.4.2/lib/backgrounder/workers/process_asset.rb:12:in `perform&#39;`
+</code></pre></div><p>I had no idea what was <code>nil</code> here that shouldn&rsquo;t be so I ran <code>bundle open carrierwave</code> to open the gem&rsquo;s codebase in a text editor. Once I was there, I found the line where the error was raised and put a <code>binding.pry</code> in it so I could get some better insight as to what was going on.</p>
 <h2 id="puts"><code>puts</code>!!!</h2>
-
 <p>Sometimes pry isn&rsquo;t going to work for you. This is especially true if you&rsquo;re using a multi-threaded web server or Sidekiq to process background jobs. When this happens, you&rsquo;ll get an interactive prompt for a few seconds then you&rsquo;ll get booted out because another process is trying to write logs to the same master process. Argh! This can be frustrating.</p>
-
 <p>My favourite thing to do here is to print my own logs. I try to make these stand out so I don&rsquo;t miss them when the logs are going by. Here&rsquo;s some pseudocode that resembles the problem I was solving today.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">def</span> <span style="color:#75af00">filename</span>
    <span style="color:#111">puts</span> <span style="color:#d88200">&#39;---------------------&#39;</span>
@@ -229,11 +212,9 @@ locals: _  __  _dir_  _ex_  _file_  _in_  _out_  _pry_  code  result</code></pre
    <span style="color:#111">new_filename</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">#{</span><span style="color:#00a8c8">SecureRandom</span><span style="color:#f92672">.</span><span style="color:#111">hex</span><span style="color:#d88200">}</span><span style="color:#d88200">.</span><span style="color:#d88200">#{</span><span style="color:#111">file</span><span style="color:#f92672">&amp;.</span><span style="color:#111">extension</span><span style="color:#d88200">}</span><span style="color:#d88200">&#34;</span>
    <span style="color:#111">puts</span> <span style="color:#111">new_filename</span>
    <span style="color:#111">new_filename</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>This gave me some clear output so I could see what was happening each time this method was called. The great thing about <code>puts</code> debugging is that you&rsquo;re never wondering if you lost count of which iteration you&rsquo;re on when a method gets called multiple times.</p>
-
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>This gave me some clear output so I could see what was happening each time this method was called. The great thing about <code>puts</code> debugging is that you&rsquo;re never wondering if you lost count of which iteration you&rsquo;re on when a method gets called multiple times.</p>
 <h2 id="conclusion">Conclusion</h2>
-
 <p>When I was working on my problem today, I used all three of these tools together. Pry is my go-to, but when that isn&rsquo;t enough, I&rsquo;ll reach for something else. I ended up learning lots about the CarrierWave life cycle that will make the rest of my task so much easier! I even learned about some methods CarrierWave has that aren&rsquo;t documented.</p>
 
 
@@ -251,7 +232,7 @@ locals: _  __  _dir_  _ex_  _file_  _in_  _out_  _pry_  code  result</code></pre
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-12-16 06:04:29.183119 -0500 EST m=&#43;0.997661269">2019</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2021-03-24 20:49:08.3083 -0400 EDT m=&#43;0.117286156">2021</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

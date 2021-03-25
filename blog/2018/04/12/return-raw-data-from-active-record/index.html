@@ -67,11 +67,10 @@
 <meta property="og:description" content="At work this week I had to speed up a background job that was clogging up our queue. This job aggregates data on records and posts to our Elastic Search index. It was suffering from all kinds of extra database calls. I had lots of fun working on this query! It’s so satisfying to make things fast.
 Here’s a bit of what I learned about building SQL queries that can get tough with a typical ActiveRecord object." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://cassidy.codes/blog/2018/04/12/return-raw-data-from-active-record/" />
-
-<meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png" />
-<meta property="article:published_time" content="2018-04-12T00:00:00+00:00" />
+<meta property="og:url" content="https://cassidy.codes/blog/2018/04/12/return-raw-data-from-active-record/" /><meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2018-04-12T00:00:00&#43;00:00" />
 <meta property="article:modified_time" content="2019-01-06T09:17:50-05:00" /><meta property="og:site_name" content="Cassidy K" />
+
 
     <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/>
@@ -89,11 +88,7 @@ Here’s a bit of what I learned about building SQL queries that can get tough w
 				<a href="https://cassidy.codes/">
 					<h2 class="nav-title">Cassidy K</h2>
 				</a>
-				<ul>
-    <li><a href="https://github.com/cassidycodes">GitHub</a></li>
-    <li><a href="https://twitter.com/cassidycodes">Twitter</a></li>
-</ul>
-
+				
 			</div>
 		</nav>
 
@@ -113,48 +108,34 @@ Here’s a bit of what I learned about building SQL queries that can get tough w
 
 		
 
-		
-
-<p>At work this week I had to speed up a background job that was clogging up our queue. This job aggregates data on records and posts to our Elastic Search index. It was suffering from all kinds of extra database calls. I had lots of fun working on this query! It’s so satisfying to make things fast.</p>
-
+		<p>At work this week I had to speed up a background job that was clogging up our queue. This job aggregates data on records and posts to our Elastic Search index. It was suffering from all kinds of extra database calls. I had lots of fun working on this query! It’s so satisfying to make things fast.</p>
 <p>Here’s a bit of what I learned about building SQL queries that  can get tough with a typical ActiveRecord object.</p>
-
 <h2 id="a-bit-about-the-data">A bit about the data</h2>
-
 <p>Let’s imaging we have a blog that has many users. Each user has many posts, and posts have many comments. Your database might look like this:</p>
-
 <p><strong>users</strong></p>
-
 <pre><code>id | name
 ---|------------------
 1  | Sonja Sis
 2  | Nicol Hollinghead
 3  | Edison Huseman
-</code></pre>
-
-<p><strong>posts</strong></p>
-
+</code></pre><p><strong>posts</strong></p>
 <p>id|title|body|user_id
 1 | I love dogs | Dogs are great. | 1
 2 | I love cats | Cats are better than dogs. | 2
 3 | I love both dogs and cats | Pets are fun. | 3</p>
-
 <p><strong>comments</strong></p>
-
 <pre><code>id | body          | user_id | post_id
 ---|---------------|---------|--------
 1  | Me too!       | 3       | 2
 2  | They are not! | 1       | 2
-</code></pre>
-
-<p>Now lets say we want to know how many comments each post has received in the last 90 days, 30 days, and 15 days. We&rsquo;re looking for a data structure like this in the end:</p>
+</code></pre><p>Now lets say we want to know how many comments each post has received in the last 90 days, 30 days, and 15 days. We&rsquo;re looking for a data structure like this in the end:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">{</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">=&gt;</span> <span style="color:#111">{</span> <span style="color:#d88200">ninety_days</span><span style="color:#111">:</span>  <span style="color:#ae81ff">190</span><span style="color:#111">,</span>
          <span style="color:#d88200">thirty_days</span><span style="color:#111">:</span>  <span style="color:#ae81ff">67</span><span style="color:#111">,</span>
          <span style="color:#d88200">fifteen_days</span><span style="color:#111">:</span> <span style="color:#ae81ff">14</span> <span style="color:#111">},</span>
   <span style="color:#ae81ff">2</span> <span style="color:#f92672">=&gt;</span> <span style="color:#111">{</span> <span style="color:#d88200">ninety_days</span><span style="color:#111">:</span>  <span style="color:#ae81ff">583</span><span style="color:#111">,</span>
          <span style="color:#d88200">thirty_days</span><span style="color:#111">:</span>  <span style="color:#ae81ff">392</span><span style="color:#111">,</span>
-         <span style="color:#d88200">fifteen_days</span><span style="color:#111">:</span> <span style="color:#ae81ff">83</span> <span style="color:#111">}</span> <span style="color:#111">}</span></code></pre></div>
-<p>We could try something like this:</p>
+         <span style="color:#d88200">fifteen_days</span><span style="color:#111">:</span> <span style="color:#ae81ff">83</span> <span style="color:#111">}</span> <span style="color:#111">}</span>
+</code></pre></div><p>We could try something like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Post</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">scope</span> <span style="color:#d88200">:between</span><span style="color:#111">,</span> <span style="color:#111">(</span><span style="color:#111">range</span><span style="color:#111">)</span><span style="color:#f92672">-&gt;</span> <span style="color:#111">{</span> <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">created_at</span><span style="color:#111">:</span> <span style="color:#111">range</span> <span style="color:#111">}</span>
 <span style="color:#00a8c8">end</span>
@@ -179,11 +160,9 @@ Here’s a bit of what I learned about building SQL queries that can get tough w
 <span style="color:#75715e">#         fifteen_days: 14 },</span>
 <span style="color:#75715e">#  2 =&gt; { ninety_days:  583,</span>
 <span style="color:#75715e">#         thirty_days:  392,</span>
-<span style="color:#75715e">#         fifteen_days: 83 } }</span></code></pre></div>
-<p>Pretty repetitive, right? If we’re building a summary of all of our the posts in our blog, we&rsquo;re going to be doing a lot of unnecessary counting!</p>
-
+<span style="color:#75715e">#         fifteen_days: 83 } }</span>
+</code></pre></div><p>Pretty repetitive, right? If we’re building a summary of all of our the posts in our blog, we&rsquo;re going to be doing a lot of unnecessary counting!</p>
 <h2 id="using-select">Using <code>select</code></h2>
-
 <p>When I first tackled this problem, I thought, “Hmmm, maybe I can use ActiveRecord&rsquo;s <code>select</code> to select a count for each period.” This does wonders for saving database queries! I’ll leave out the rest of the class here for brevity. Here’s what that query looks like:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># Use SQL to count the comments for each post.</span>
 <span style="color:#111">select</span> <span style="color:#f92672">=</span> <span style="color:#f92672">&lt;&lt;~</span><span style="color:#00a8c8">SQL</span>
@@ -198,9 +177,8 @@ Here’s a bit of what I learned about building SQL queries that can get tough w
            <span style="color:#00a8c8">Count</span><span style="color:#111">(</span><span style="color:#00a8c8">IF</span><span style="color:#111">(</span><span style="color:#00a8c8">DATE_SUB</span><span style="color:#111">(</span><span style="color:#00a8c8">CURRENT_TIMESTAMP</span><span style="color:#111">,</span> <span style="color:#ae81ff">15</span> <span style="color:#00a8c8">DAY</span><span style="color:#111">),</span>
                     <span style="color:#111">comments</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#111">,</span>
                     <span style="color:#00a8c8">NULL</span><span style="color:#111">))</span> <span style="color:#00a8c8">AS</span> <span style="color:#111">fifteen_days</span>
-         <span style="color:#00a8c8">SQL</span></code></pre></div>
-<p>We need a <code>LEFT OUTER JOIN</code> here because we want to be sure we get posts back even if they have 0 comments.</p>
-
+         <span style="color:#00a8c8">SQL</span>
+</code></pre></div><p>We need a <code>LEFT OUTER JOIN</code> here because we want to be sure we get posts back even if they have 0 comments.</p>
 <p>Also note the <code>group</code> here. Without this, we&rsquo;d get 1 post record back for each comment and we&rsquo;d end up with duplicates because posts have many comments!</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">posts</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">Post</span><span style="color:#f92672">.</span><span style="color:#111">left_outer_joins</span><span style="color:#111">(</span><span style="color:#d88200">:comments</span><span style="color:#111">)</span>
             <span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#111">select</span><span style="color:#111">)</span>
@@ -211,15 +189,11 @@ Here’s a bit of what I learned about building SQL queries that can get tough w
   <span style="color:#111">h</span><span style="color:#f92672">[</span><span style="color:#111">post</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#f92672">][</span><span style="color:#d88200">:ninety_days</span><span style="color:#f92672">]</span>  <span style="color:#f92672">=</span> <span style="color:#111">post</span><span style="color:#f92672">.</span><span style="color:#111">ninety_days</span>
   <span style="color:#111">h</span><span style="color:#f92672">[</span><span style="color:#111">post</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#f92672">][</span><span style="color:#d88200">:thirty_days</span><span style="color:#f92672">]</span>  <span style="color:#f92672">=</span> <span style="color:#111">post</span><span style="color:#f92672">.</span><span style="color:#111">thirty_days</span>
   <span style="color:#111">h</span><span style="color:#f92672">[</span><span style="color:#111">post</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#f92672">][</span><span style="color:#d88200">:fifteen_days</span><span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#111">post</span><span style="color:#f92672">.</span><span style="color:#111">fifteen_days</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Ok, great! We’ve solved the problem of counting the going back to the database to count the comments. Now we just do one query that returns a count for us.</p>
-
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Ok, great! We’ve solved the problem of counting the going back to the database to count the comments. Now we just do one query that returns a count for us.</p>
 <p>Did you know that when you add <code>SELECT … AS my_select</code>, ActiveRecord will add a method for that attribute to the object returned? That’s why <code>post.ninety_days</code> works in the code above.  I thought that was pretty handy.</p>
-
 <p>I’m still not comfortable with this end result though. We’re loading records into ActiveRecord when all we need from them is the count data and the post id.</p>
-
-<h2 id="exec-query-to-the-rescue"><code>exec_query</code> to the rescue!</h2>
-
+<h2 id="exec_query-to-the-rescue"><code>exec_query</code> to the rescue!</h2>
 <p><code>exec_query</code> returns a hash of the column names and values you asked for. This lets you skip active record entirely!</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">query</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">Post</span><span style="color:#f92672">.</span><span style="color:#111">left_outer_joins</span><span style="color:#111">(</span><span style="color:#d88200">:comments</span><span style="color:#111">)</span>
             <span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#111">select</span><span style="color:#111">)</span>
@@ -238,15 +212,11 @@ Here’s a bit of what I learned about building SQL queries that can get tough w
 <span style="color:#75715e">#         fifteen_days: 14 },</span>
 <span style="color:#75715e">#  2 =&gt; { ninety_days:  583,</span>
 <span style="color:#75715e">#         thirty_days:  392,</span>
-<span style="color:#75715e">#         fifteen_days: 83 }</span></code></pre></div>
-<p>Yay! We got the same result and look at how little code it is! If you’re querying a big dataset, this will save to all kinds of time!</p>
-
+<span style="color:#75715e">#         fifteen_days: 83 }</span>
+</code></pre></div><p>Yay! We got the same result and look at how little code it is! If you’re querying a big dataset, this will save to all kinds of time!</p>
 <h2 id="wrapping-up">Wrapping Up</h2>
-
 <p>If you need to retrieve data from the database, but don&rsquo;t need any of the functionality of your models, use <code>exec_query</code> to skip ActiveRecord and speed things up a bit.</p>
-
 <p>If you <em>do</em> need ActiveRecord, then you can add additional attributes to the object you get back by passing SQL into the <code>select</code> method and naming giving it a name with <code>AS</code>.</p>
-
 <p>For queries that have complex joins, or ones that you might need to build programmatically, relying on ActiveRecord might get difficult. Take a look at <a href="https://github.com/rails/arel">Arel</a>, a library that forms the abstract syntax tree manager behind ActiveRecord, for situations like this.</p>
 
 
@@ -264,7 +234,7 @@ Here’s a bit of what I learned about building SQL queries that can get tough w
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-12-16 06:04:29.199046 -0500 EST m=&#43;1.013588263">2019</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2021-03-24 20:49:08.335145 -0400 EDT m=&#43;0.144130562">2021</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

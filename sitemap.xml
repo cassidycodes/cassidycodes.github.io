@@ -1,134 +1,77 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://cassidy.codes/blog/</loc>
     <lastmod>2019-12-14T11:46:46-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/</loc>
     <lastmod>2019-12-14T11:46:46-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2019-12-14-rubo-cop-is-wrong/</loc>
     <lastmod>2019-12-14T11:16:13-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/series/linting/</loc>
     <lastmod>2019-12-14T11:16:13-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/series/ruby/</loc>
     <lastmod>2019-12-14T11:16:13-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/series/ruby-on-rails/</loc>
     <lastmod>2019-12-14T11:16:13-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/series/</loc>
     <lastmod>2019-12-14T11:16:13-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2019-09-28-rspec-shared-examples-contexts/</loc>
     <lastmod>2019-12-14T11:16:13-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/series/testing/</loc>
     <lastmod>2019-12-14T11:16:13-05:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://cassidy.codes/blog/2019-09-22-go-workshop/</loc>
-    <lastmod>2019-09-24T20:53:45-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/series/go/</loc>
     <lastmod>2019-09-24T20:53:45-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
+    <loc>https://cassidy.codes/blog/2019-09-22-go-workshop/</loc>
+    <lastmod>2019-09-24T20:53:45-04:00</lastmod>
+  </url><url>
     <loc>https://cassidy.codes/blog/2019-08-06-favourite-debugging-trick/</loc>
     <lastmod>2019-08-06T23:46:06-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2019-08-03-tmux-colour-theme/</loc>
     <lastmod>2019-09-24T21:04:05-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/series/dotfiles/</loc>
     <lastmod>2019-09-24T21:04:05-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2019-08-01-debugging-in-rails/</loc>
     <lastmod>2019-08-02T20:07:23-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2018/05/26/concatenating-mysql-results-with-group-by/</loc>
     <lastmod>2019-01-14T19:47:35-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2018/04/12/return-raw-data-from-active-record/</loc>
     <lastmod>2019-01-06T09:17:50-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2018-03-22-rewrite-git-history/</loc>
     <lastmod>2019-01-05T22:27:33-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2017/05/12-toronto-sound-prints/</loc>
     <lastmod>2019-01-06T09:30:34-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2015/10/06/video-glitch-art-in-ruby/</loc>
     <lastmod>2019-12-14T11:46:46-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2015/05/25/kirby-cms/</loc>
     <lastmod>2019-12-14T11:46:46-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2015/03/10/scraping-city-toronto-data/</loc>
     <lastmod>2019-01-05T22:27:33-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2015/01/26/arrays-vs-hashes-ruby/</loc>
     <lastmod>2019-01-05T22:27:33-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://cassidy.codes/blog/2017/04/25/ffmpeg-frames-to-gif-optimization/</loc>
     <lastmod>2019-12-14T11:46:46-05:00</lastmod>
   </url>
-  
 </urlset>

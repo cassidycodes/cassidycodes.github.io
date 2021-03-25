@@ -67,11 +67,10 @@
 <meta property="og:description" content="This weekend I created a small, Ruby CRM application that stores contact information. You can check out my code on GitHub. While I was building this app, most people were using an array to store their contact information, but I wanted to use a Hash. I kew that theoretically Hashes are fster than Arrays, but I didn&rsquo;t know why.
 Arrays vs Hashes The quick answer is that Hashes in Ruby are more easily accessible than an item in an array." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://cassidy.codes/blog/2015/01/26/arrays-vs-hashes-ruby/" />
-
-<meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png" />
-<meta property="article:published_time" content="2015-01-26T00:00:00+00:00" />
+<meta property="og:url" content="https://cassidy.codes/blog/2015/01/26/arrays-vs-hashes-ruby/" /><meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2015-01-26T00:00:00&#43;00:00" />
 <meta property="article:modified_time" content="2019-01-05T22:27:33-05:00" /><meta property="og:site_name" content="Cassidy K" />
+
 
     <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/>
@@ -89,11 +88,7 @@ Arrays vs Hashes The quick answer is that Hashes in Ruby are more easily accessi
 				<a href="https://cassidy.codes/">
 					<h2 class="nav-title">Cassidy K</h2>
 				</a>
-				<ul>
-    <li><a href="https://github.com/cassidycodes">GitHub</a></li>
-    <li><a href="https://twitter.com/cassidycodes">Twitter</a></li>
-</ul>
-
+				
 			</div>
 		</nav>
 
@@ -113,18 +108,10 @@ Arrays vs Hashes The quick answer is that Hashes in Ruby are more easily accessi
 
 		
 
-		
-
-<p>This weekend I created a small, Ruby CRM application that stores contact information. You can check out my code on <a href="https://github.com/CivicImages/CRM_App">GitHub</a>. While I was building this app, most people were using an array to store their contact information, but I wanted to use a Hash. I kew that theoretically Hashes are fster than Arrays, but I didn&rsquo;t know why.</p>
-
+		<p>This weekend I created a small, Ruby CRM application that stores contact information. You can check out my code on <a href="https://github.com/CivicImages/CRM_App">GitHub</a>. While I was building this app, most people were using an array to store their contact information, but I wanted to use a Hash. I kew that theoretically Hashes are fster than Arrays, but I didn&rsquo;t know why.</p>
 <h2 id="arrays-vs-hashes">Arrays vs Hashes</h2>
-
 <p>The quick answer is that Hashes in Ruby are more easily accessible than an item in an array. Check out the video below that explains how this works. If you don&rsquo;t want to watch the whole thing, my notes are below.</p>
-
-<div class="embed-responsive embed-responsive-16by9" style="margin-bottom: 1.5rem;">
-  <iframe width="740" height="416" src="//www.youtube.com/embed/YHULcgaATh4" frameborder="0" allowfullscreen></iframe>
-</div>
-
+<!-- raw HTML omitted -->
 <p>Ruby sorts key-value pairs into one of 11 bins. It does this using a a method called <code>hash</code>. <code>hash</code> returns a really big number on any object. Try calling <code>12345.hash</code> or <code>&quot;abcde&quot;.hash</code>. Every time you call it on the same value, you&rsquo;ll get the same really huge number.
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ae81ff">12345</span><span style="color:#f92672">.</span><span style="color:#111">hash</span>
 <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">4392066022887924543</span></code></pre></div>
@@ -132,23 +119,14 @@ Ruby then gets the modulus of of this number when divided by 11. So any number <
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#ae81ff">12345</span><span style="color:#f92672">.</span><span style="color:#111">hash</span> <span style="color:#f92672">%</span> <span style="color:#ae81ff">11</span>
 <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">3</span> <span style="color:#75715e"># This would go into bin 3</span></code></pre></div>
 When you call a <code>key</code> from a hash, Ruby calculates the modulus again and goes right to the bin where this value was stored. So in a hash, the <code>key</code> serves as a shortcut right to the information stored in the <code>value</code>.</p>
-
 <h2 id="what-are-enumerables">What are Enumerables</h2>
-
 <p>&ldquo;Enumerable&rdquo; is a word that confused me at when I first saw it. The Ruby Docs say, &ldquo;The <code>Enumerable</code> mixin provides collection classes with several traversal and searching methods, and with the ability to sort.&rdquo; Uuh, okay.</p>
-
 <p>When I call <code>Enumerable.class</code> in Pry it tells me that Enumerables are a <code>Module</code>. I know that a module is a functionality that is shared between otherwise unrelated <code>Classes</code>. So this means that an <code>Enumerable</code> lets you search or move through classes that are collections of things, like <code>Arrays</code> and <code>Hahses</code>.</p>
-
 <p>In my CRM I used <code>.find_all</code> in my original <code>search_contacts</code> method. When I did this I noticed that the method was returning the result plus the whole hash itself. Here, I have to assign the result to a variable the end the method by returning that variable. If I simply had <code>@contacts.find_all { ... }</code> as my last line, my search function would return all the contacts and then return the entire Hash that I searched.</p>
-
 <h2 id="searching-the-hash">Searching the Hash</h2>
-
 <p>For the time being, I am searching for individual contacts by calling the contact ID, or the <code>key</code> in the Hash. But I want to be able to search for contacts by the content of any value. So you could input &ldquo;jekyll&rdquo; and the app will retrun all contacts with &ldquo;jekyll&rdquo; in any variable. Any idea how to do that?</p>
-
 <p>I have tried iterating through the hash and using <code>.find_all</code>. I&rsquo;ve also built my own search method, but right now, neither of those are working for me. I think <code>find_all</code> doesn&rsquo;t work because the values stored in the Hash are instances of the class, and not just a <code>string</code> or <code>int</code>.</p>
-
 <p>Another question I have is, if you are searching a Hash for all entries that match a value, is a Hash stil faster than an array? In other words, is it faster to load Hash bins individually than it is to load the whole array?</p>
-
 <p>Have an answer for this? I&rsquo;d love to hear it.</p>
 
 
@@ -166,7 +144,7 @@ When you call a <code>key</code> from a hash, Ruby calculates the modulus again 
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-12-16 06:04:29.203567 -0500 EST m=&#43;1.018108346">2019</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2021-03-24 20:49:08.308974 -0400 EDT m=&#43;0.117959879">2021</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

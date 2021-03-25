@@ -45,8 +45,8 @@
          "@id": "https:\/\/cassidy.codes"
     },
     "articleSection" : "blog",
-    "name" : "Don\x27t Trust the Cops: Sometimes Rubocop is Wrong",
-    "headline" : "Don\x27t Trust the Cops: Sometimes Rubocop is Wrong",
+    "name" : "Don\u0027t Trust the Cops: Sometimes Rubocop is Wrong",
+    "headline" : "Don\u0027t Trust the Cops: Sometimes Rubocop is Wrong",
     "description" : "Rubocop autocorrect doesn't always speak Rails!",
     "inLanguage" : "en-US",
     "author" : "Cassidy K",
@@ -67,10 +67,11 @@
     <meta property="og:title" content="Don&#39;t Trust the Cops: Sometimes Rubocop is Wrong" />
 <meta property="og:description" content="Rubocop autocorrect doesn&#39;t always speak Rails!" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://cassidy.codes/blog/2019-12-14-rubo-cop-is-wrong/" />
+<meta property="og:url" content="https://cassidy.codes/blog/2019-12-14-rubo-cop-is-wrong/" /><meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/><meta property="article:section" content="blog" />
 <meta property="article:published_time" content="2019-12-14T10:22:00-05:00" />
 <meta property="article:modified_time" content="2019-12-14T11:16:13-05:00" /><meta property="og:site_name" content="Cassidy K" />
-
+<meta property="og:see_also" content="https://cassidy.codes/blog/2019-09-28-rspec-shared-examples-contexts/" />
+<meta property="og:see_also" content="https://cassidy.codes/blog/2019-09-28-rspec-shared-examples-contexts/" />
 
 
 
@@ -89,11 +90,7 @@
 				<a href="https://cassidy.codes/">
 					<h2 class="nav-title">Cassidy K</h2>
 				</a>
-				<ul>
-    <li><a href="https://github.com/cassidycodes">GitHub</a></li>
-    <li><a href="https://twitter.com/cassidycodes">Twitter</a></li>
-</ul>
-
+				
 			</div>
 		</nav>
 
@@ -113,52 +110,41 @@
 
 		
 
-		
-
-<p>My team at work recently upgraded our version of <a href="https://github.com/rubocop-hq/rubocop">Rubocop</a>, the popular linter
+		<p>My team at work recently upgraded our version of <a href="https://github.com/rubocop-hq/rubocop">Rubocop</a>, the popular linter
 used to enforce good Ruby code style. With the upgrade we got a whole bunch of new suggestions and warnings about style
 violations.</p>
-
 <p>One of them that tripped us up was the
 <a href="https://github.com/rubocop-hq/rubocop-performance/blob/master/lib/rubocop/cop/performance/count.rb">Performance/Count</a>
 rule.</p>
-
 <p>According to the Rubocop docs:</p>
-
 <blockquote>
 <p>This cop is used to identify usages of <code>count</code> on an <code>Enumerable</code> that follow calls to <code>select</code> or <code>reject</code>. Querying
 logic can instead be passed to the <code>count</code> call.</p>
 </blockquote>
-
 <p>So in plain Ruby, the cop sees that you are filtering an array with <code>select</code> or <code>reject</code> and <em>then</em> calling <code>count</code> on
 it. This is inefficient because <code>count</code> can actually do all this work for you.</p>
-
 <p>But! What if you&rsquo;re in a Rails project and you have some code that looks like this?</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">@users</span><span style="color:#f92672">.</span><span style="color:#111">select</span> <span style="color:#111">{</span> <span style="color:#f92672">|</span><span style="color:#111">u</span><span style="color:#f92672">|</span> <span style="color:#111">u</span><span style="color:#f92672">.</span><span style="color:#111">admin?</span> <span style="color:#111">}</span><span style="color:#f92672">.</span><span style="color:#111">count</span></code></pre></div>
-<p>Rubocop will autocorrect this to:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">@users</span><span style="color:#f92672">.</span><span style="color:#111">count</span> <span style="color:#111">{</span> <span style="color:#f92672">|</span><span style="color:#111">u</span><span style="color:#f92672">|</span> <span style="color:#111">u</span><span style="color:#f92672">.</span><span style="color:#111">admin?</span> <span style="color:#111">}</span></code></pre></div>
-<p>Looks okay? Well, this will likely execute a SQL count that ignores the block!!! Rubocop incorrectly assumes that
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">@users</span><span style="color:#f92672">.</span><span style="color:#111">select</span> <span style="color:#111">{</span> <span style="color:#f92672">|</span><span style="color:#111">u</span><span style="color:#f92672">|</span> <span style="color:#111">u</span><span style="color:#f92672">.</span><span style="color:#111">admin?</span> <span style="color:#111">}</span><span style="color:#f92672">.</span><span style="color:#111">count</span>
+</code></pre></div><p>Rubocop will autocorrect this to:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">@users</span><span style="color:#f92672">.</span><span style="color:#111">count</span> <span style="color:#111">{</span> <span style="color:#f92672">|</span><span style="color:#111">u</span><span style="color:#f92672">|</span> <span style="color:#111">u</span><span style="color:#f92672">.</span><span style="color:#111">admin?</span> <span style="color:#111">}</span>
+</code></pre></div><p>Looks okay? Well, this will likely execute a SQL count that ignores the block!!! Rubocop incorrectly assumes that
 <code>@users</code> is an <code>Array</code>. Why else would you be calling <code>select</code> on it, right?</p>
-
 <p>In our case, though, <code>@users</code> was actually an ActiveRecord object that hadn&rsquo;t been loaded yet! Since ActiveRecord
 lazy-loads things, sending count to this object executes an SQL <code>COUNT</code> that ignores the block passed in!</p>
-
 <p>Here&rsquo;s what it looks like in action:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">User</span><span style="color:#f92672">.</span><span style="color:#111">count</span> <span style="color:#111">{</span> <span style="color:#f92672">|</span><span style="color:#111">u</span><span style="color:#f92672">|</span> <span style="color:#111">u</span><span style="color:#f92672">.</span><span style="color:#111">admin?</span> <span style="color:#111">}</span>
 <span style="color:#75715e"># (0.4ms)  SELECT COUNT(*) FROM &#34;users&#34;</span>
 <span style="color:#75715e"># =&gt; 320</span>
 <span style="color:#00a8c8">User</span><span style="color:#f92672">.</span><span style="color:#111">count</span>
 <span style="color:#75715e"># (0.6ms)  SELECT COUNT(*) FROM &#34;users&#34;</span>
-<span style="color:#75715e"># =&gt; 320</span></code></pre></div>
-<p>See how we got the same number each time here? This is because ActiveRecord ignores the block passed into count without
+<span style="color:#75715e"># =&gt; 320</span>
+</code></pre></div><p>See how we got the same number each time here? This is because ActiveRecord ignores the block passed into count without
 raising an error and counts <em>all</em> users!.</p>
-
 <p>The correct thing to do here is to pass your filter parameters into a <code>where</code> <em>and then</em> do a <code>count</code>.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">User</span><span style="color:#f92672">.</span><span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">type</span><span style="color:#111">:</span> <span style="color:#d88200">&#39;admin&#39;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">count</span>
 <span style="color:#75715e"># (0.3ms)  SELECT COUNT(*) FROM &#34;users&#34; WHERE &#34;users&#34;.&#34;type&#34; = $1  [[&#34;type&#34;, &#34;Admin&#34;]]</span>
-<span style="color:#75715e"># =&gt; 10</span></code></pre></div>
-<h2 id="tl-dr">TL;DR</h2>
-
+<span style="color:#75715e"># =&gt; 10</span>
+</code></pre></div><h2 id="tldr">TL;DR</h2>
 <ul>
 <li>ActiveRecord count works like this: <a href="https://devdocs.io/rails~4.2/activerecord/calculations#method-i-count">https://devdocs.io/rails~4.2/activerecord/calculations#method-i-count</a></li>
 <li>Ruby count works like this: <a href="https://devdocs.io/ruby~2.3/enumerable#method-i-count">https://devdocs.io/ruby~2.3/enumerable#method-i-count</a></li>
@@ -180,7 +166,7 @@ raising an error and counts <em>all</em> users!.</p>
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-12-16 06:04:29.136698 -0500 EST m=&#43;0.951240609">2019</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2021-03-24 20:49:08.319179 -0400 EDT m=&#43;0.128164755">2021</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

@@ -67,11 +67,10 @@
 <meta property="og:description" content="Recently, I needed to build a query that would transform data in our database into a format that we posted to ElasticSearch. I&rsquo;ll use the example of blog posts here since they&rsquo;re easy for everyone to grasp. Imagine that each post can have many tags and you want one field on ElasticSearch with the tag ids and another field that has the tag names and description.
 Here&rsquo;s what the database might look like:" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://cassidy.codes/blog/2018/05/26/concatenating-mysql-results-with-group-by/" />
-
-<meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png" />
-<meta property="article:published_time" content="2018-05-26T00:00:00+00:00" />
+<meta property="og:url" content="https://cassidy.codes/blog/2018/05/26/concatenating-mysql-results-with-group-by/" /><meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2018-05-26T00:00:00&#43;00:00" />
 <meta property="article:modified_time" content="2019-01-14T19:47:35-05:00" /><meta property="og:site_name" content="Cassidy K" />
+
 
     <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/>
@@ -89,11 +88,7 @@ Here&rsquo;s what the database might look like:"/>
 				<a href="https://cassidy.codes/">
 					<h2 class="nav-title">Cassidy K</h2>
 				</a>
-				<ul>
-    <li><a href="https://github.com/cassidycodes">GitHub</a></li>
-    <li><a href="https://twitter.com/cassidycodes">Twitter</a></li>
-</ul>
-
+				
 			</div>
 		</nav>
 
@@ -113,23 +108,15 @@ Here&rsquo;s what the database might look like:"/>
 
 		
 
-		
-
-<p>Recently, I needed to build a query that would transform data in our database into a format that we posted to ElasticSearch. I&rsquo;ll use the example of blog posts here since they&rsquo;re easy for everyone to grasp. Imagine that each post can have many tags and you want one field on ElasticSearch with the tag ids and another field that has the tag names and description.</p>
-
+		<p>Recently, I needed to build a query that would transform data in our database into a format that we posted to ElasticSearch. I&rsquo;ll use the example of blog posts here since they&rsquo;re easy for everyone to grasp. Imagine that each post can have many tags and you want one field on ElasticSearch with the tag ids and another field that has the tag names and description.</p>
 <p>Here&rsquo;s what the database might look like:</p>
-
 <p><em>posts</em></p>
-
 <pre><code>id | title
 ---|------------------------------
 1  | Blogging about dogs is fun!
 2  | Look at these cute dogs
 3  | Wow how about these cute dogs
-</code></pre>
-
-<p><em>post_tags</em></p>
-
+</code></pre><p><em>post_tags</em></p>
 <pre><code>post_id | tag_id
 --------|-------
 1       | 1
@@ -137,26 +124,17 @@ Here&rsquo;s what the database might look like:"/>
 2       | 1
 2       | 3
 3       | 1
-</code></pre>
-
-<p><em>tags</em></p>
-
+</code></pre><p><em>tags</em></p>
 <pre><code>id | name | description
 ---|------|-----------------
 1  | dogs | Posts about dogs
 2  | cute | Cute things
 3  | omg  | OMG CUTE
-</code></pre>
-
-<p>And here is the result we&rsquo;re looking for:</p>
-
+</code></pre><p>And here is the result we&rsquo;re looking for:</p>
 <pre><code>id | title                       | tag_ids | tag_names_descriptions
 ---|-----------------------------|---------|------------------------------------------
 1  | Blogging about dogs is fun! | 1, 2    | dogs, cute, Posts about dogs, Cute things
-</code></pre>
-
-<h2 id="starting-query">Starting Query</h2>
-
+</code></pre><h2 id="starting-query">Starting Query</h2>
 <p>Let&rsquo;s start by retrieving a join table of our posts and tags. We&rsquo;ll limit this to one post to keep our tables small for this example.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span>
        <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">title</span><span style="color:#111">,</span>
@@ -168,22 +146,16 @@ Here&rsquo;s what the database might look like:"/>
                <span style="color:#00a8c8">ON</span> <span style="color:#111">pt</span><span style="color:#111">.</span><span style="color:#111">post_id</span> <span style="color:#f92672">=</span> <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">id</span>
        <span style="color:#00a8c8">INNER</span> <span style="color:#00a8c8">JOIN</span> <span style="color:#111">tags</span> <span style="color:#111">tag</span>
                <span style="color:#00a8c8">ON</span> <span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#111">pt</span><span style="color:#111">.</span><span style="color:#111">tag_id</span>
-<span style="color:#00a8c8">LIMIT</span>  <span style="color:#ae81ff">1</span><span style="color:#111">;</span></code></pre></div>
-<pre><code>id | title                       | tag_id | tag_name | tag_description
+<span style="color:#00a8c8">LIMIT</span>  <span style="color:#ae81ff">1</span><span style="color:#111">;</span>
+</code></pre></div><pre><code>id | title                       | tag_id | tag_name | tag_description
 ---|-----------------------------|--------|----------|-----------------
 1  | Blogging about dogs is fun! | 1      | dogs     | Posts about dogs
 2  | Blogging about dogs is fun! | 2      | cute     | Cute things
-</code></pre>
-
-<p>Ok, great, we have a table with our post and its tags, but we have duplicate rows! We can use <code>GROUP BY</code> to group these row by the post id, but then we&rsquo;ll lose the tag data in the second row and get a result that looks like this:</p>
-
+</code></pre><p>Ok, great, we have a table with our post and its tags, but we have duplicate rows! We can use <code>GROUP BY</code> to group these row by the post id, but then we&rsquo;ll lose the tag data in the second row and get a result that looks like this:</p>
 <pre><code>id | title                       | tag_id | tag_name | tag_description
 ---|-----------------------------|--------|----------|-----------------
 1  | Blogging about dogs is fun! | 1      | dogs     | Posts about dogs
-</code></pre>
-
-<h2 id="group-concat">Group_concat</h2>
-
+</code></pre><h2 id="group_concat">Group_concat</h2>
 <p>We can use the <code>Group_concat</code> function to concatenate data from multiple rows when we use <code>GROUP BY</code>:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span>
        <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">title</span><span style="color:#111">,</span>
@@ -196,31 +168,25 @@ Here&rsquo;s what the database might look like:"/>
        <span style="color:#00a8c8">INNER</span> <span style="color:#00a8c8">JOIN</span> <span style="color:#111">tags</span> <span style="color:#111">tag</span>
                <span style="color:#00a8c8">ON</span> <span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#111">pt</span><span style="color:#111">.</span><span style="color:#111">tag_id</span>
 <span style="color:#00a8c8">GROUP</span>  <span style="color:#00a8c8">BY</span> <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">id</span>
-<span style="color:#00a8c8">LIMIT</span>  <span style="color:#ae81ff">1</span><span style="color:#111">;</span>  </code></pre></div>
-<pre><code>id | title                       | tag_ids | tag_name | tag_description
+<span style="color:#00a8c8">LIMIT</span>  <span style="color:#ae81ff">1</span><span style="color:#111">;</span>  
+</code></pre></div><pre><code>id | title                       | tag_ids | tag_name | tag_description
 ---|-----------------------------|---------|----------|-----------------
 1  | Blogging about dogs is fun! | 1, 2    | dogs     | Posts about dogs
-</code></pre>
-
-<p>Take a look at <a href="https://dev.mysql.com/doc/refman/8.0/en/group-by-functions.html#function_group-concat">the MySQL Docs for Group_concat</a> you can do some cool things with it like ensure the values are unique, sort the values, and choose a custom separator.</p>
-
+</code></pre><p>Take a look at <a href="https://dev.mysql.com/doc/refman/8.0/en/group-by-functions.html#function_group-concat">the MySQL Docs for Group_concat</a> you can do some cool things with it like ensure the values are unique, sort the values, and choose a custom separator.</p>
 <p>But what about our tag_name and tag_description? Here, we need to concatenate two separate columns into one!</p>
-
-<h2 id="concat-ws">Concat_ws</h2>
-
+<h2 id="concat_ws">Concat_ws</h2>
 <p>We know that <code>Group_concat</code> gives us a string, so if we look under String Functions in the MySQL docs, we&rsquo;ll find <a href="https://dev.mysql.com/doc/refman/8.0/en/string-functions.html#function_concat-ws"><code>Concat_ws</code></a>. <code>Concat_ws</code> lets us concatenate two or more strings with a separator between them. The separator is a comma by default, but for legibility, we want a space too, so let&rsquo;s use the <code>SEPARATOR</code> option. Here are our steps:</p>
-
 <p>Concatenate the tag name:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#111">Group_concat</span><span style="color:#111">(</span><span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">name</span> <span style="color:#111">SEPARATOR</span> <span style="color:#d88200">&#34;, &#34;</span><span style="color:#111">)</span></code></pre></div>
-<p>Concatenate the tag description:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#111">Group_concat</span><span style="color:#111">(</span><span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">description</span> <span style="color:#111">SEPARATOR</span> <span style="color:#d88200">&#34;, &#34;</span><span style="color:#111">)</span></code></pre></div>
-<p>And concatenate both of those!</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#111">Group_concat</span><span style="color:#111">(</span><span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">name</span> <span style="color:#111">SEPARATOR</span> <span style="color:#d88200">&#34;, &#34;</span><span style="color:#111">)</span>
+</code></pre></div><p>Concatenate the tag description:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#111">Group_concat</span><span style="color:#111">(</span><span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">description</span> <span style="color:#111">SEPARATOR</span> <span style="color:#d88200">&#34;, &#34;</span><span style="color:#111">)</span>
+</code></pre></div><p>And concatenate both of those!</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#111">Concat_ws</span><span style="color:#111">(</span>
   <span style="color:#d88200">&#34;, &#34;</span>
   <span style="color:#111">Group_concat</span><span style="color:#111">(</span><span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">name</span> <span style="color:#111">SEPARATOR</span> <span style="color:#d88200">&#34;, &#34;</span><span style="color:#111">),</span>
   <span style="color:#111">Group_concat</span><span style="color:#111">(</span><span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">description</span> <span style="color:#111">SEPARATOR</span> <span style="color:#d88200">&#34;, &#34;</span><span style="color:#111">)</span>
-<span style="color:#111">)</span></code></pre></div>
-<h3 id="putting-it-all-together">Putting it all together</h3>
+<span style="color:#111">)</span>
+</code></pre></div><h3 id="putting-it-all-together">Putting it all together</h3>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span>
        <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">title</span><span style="color:#111">,</span>
        <span style="color:#111">Group_concat</span><span style="color:#111">(</span><span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">)</span> <span style="color:#00a8c8">AS</span> <span style="color:#111">tag_ids</span><span style="color:#111">,</span>
@@ -235,16 +201,12 @@ Here&rsquo;s what the database might look like:"/>
        <span style="color:#00a8c8">INNER</span> <span style="color:#00a8c8">JOIN</span> <span style="color:#111">tags</span> <span style="color:#111">tag</span>
                <span style="color:#00a8c8">ON</span> <span style="color:#111">tag</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#111">pt</span><span style="color:#111">.</span><span style="color:#111">tag_id</span>
 <span style="color:#00a8c8">GROUP</span>  <span style="color:#00a8c8">BY</span> <span style="color:#111">post</span><span style="color:#111">.</span><span style="color:#111">id</span>
-<span style="color:#00a8c8">LIMIT</span>  <span style="color:#ae81ff">1</span><span style="color:#111">;</span></code></pre></div>
-<pre><code>id | title                       | tag_ids | tag_name   | tag_descriptions
+<span style="color:#00a8c8">LIMIT</span>  <span style="color:#ae81ff">1</span><span style="color:#111">;</span>
+</code></pre></div><pre><code>id | title                       | tag_ids | tag_name   | tag_descriptions
 ---|-----------------------------|---------|------------|------------------------------
 1  | Blogging about dogs is fun! | 1, 2    | dogs, cute | Posts about dogs, Cute things
-</code></pre>
-
-<h2 id="nice-work">Nice work!</h2>
-
+</code></pre><h2 id="nice-work">Nice work!</h2>
 <p>In this post, we&rsquo;ve learned how to use <code>Group_concat</code> to concatenate data in a column when using <code>GROUP BY</code>. <code>Group_concat</code> lets us keep data that would otherwise disappear when we group things.</p>
-
 <p>We also learned how to combine data from multiple columns by using <code>Concat_ws</code> together with <code>Group_concat</code>. With this function, we can join multiple columns and rows together into one value.</p>
 
 
@@ -262,7 +224,7 @@ Here&rsquo;s what the database might look like:"/>
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-12-16 06:04:29.187576 -0500 EST m=&#43;1.002118412">2019</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2021-03-24 20:49:08.313306 -0400 EDT m=&#43;0.122292031">2021</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

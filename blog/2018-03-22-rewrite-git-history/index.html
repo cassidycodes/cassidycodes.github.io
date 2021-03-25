@@ -67,11 +67,10 @@
 <meta property="og:description" content="I was recently working on a new node project, and while I was first testing things out, I committed the contents of the dist directory to git. Later on, I was getting the project set up with Docker, and I realized I didn’t want the dist in the repo as it would increase the size of the Docker image.
 Removing files from git is a bit tricky. You can add it to the ." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://cassidy.codes/blog/2018-03-22-rewrite-git-history/" />
-
-<meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png" />
-<meta property="article:published_time" content="2018-03-22T00:00:00+00:00" />
+<meta property="og:url" content="https://cassidy.codes/blog/2018-03-22-rewrite-git-history/" /><meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2018-03-22T00:00:00&#43;00:00" />
 <meta property="article:modified_time" content="2019-01-05T22:27:33-05:00" /><meta property="og:site_name" content="Cassidy K" />
+
 
     <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/>
@@ -89,11 +88,7 @@ Removing files from git is a bit tricky. You can add it to the ."/>
 				<a href="https://cassidy.codes/">
 					<h2 class="nav-title">Cassidy K</h2>
 				</a>
-				<ul>
-    <li><a href="https://github.com/cassidycodes">GitHub</a></li>
-    <li><a href="https://twitter.com/cassidycodes">Twitter</a></li>
-</ul>
-
+				
 			</div>
 		</nav>
 
@@ -114,37 +109,33 @@ Removing files from git is a bit tricky. You can add it to the ."/>
 		
 
 		<p>I was recently working on a new node project, and while I was first testing things out, I committed the contents of the dist directory to git. Later on, I was getting the project set up with Docker, and I realized I didn’t want the dist in the repo as it would increase the size of the Docker image.</p>
-
 <p>Removing files from git is a bit tricky. You can add it to the .gitignore, but once git is tracking an object, git will always follow its changes even if it&rsquo;s in the gitignore. I&rsquo;ve kept <a href="https://dalibornasevic.com/posts/2-permanently-remove-files-and-folders-from-a-git-repository">Dalibor Nasevic&rsquo;s post</a> in my bookmarks for situations like this. But to remove the dist from our project, we needed to rewrite history on multiple branches to be sure that the files here would never show up again</p>
-
 <p>Here are the steps we followed to rewrite history on multiple branches:</p>
-
 <p>Checkout master.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git checkout master</code></pre></div>
-<p>Add <code>dist/</code> to the <code>.gitignore</code>.</p>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git checkout master
+</code></pre></div><p>Add <code>dist/</code> to the <code>.gitignore</code>.</p>
 <p>Rewrite history on master to ignore the <code>dist</code> directory. Note that this rewrites the SHA of each commit. Your branch will now look like an entirely different set of commits to git.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git filter-branch --tree-filter <span style="color:#d88200">&#39;rm -rf dist&#39;</span> HEAD</code></pre></div>
-<p>See if any objects in your repo are pointing to the dist. You should see your branch name in the output here.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git <span style="color:#00a8c8">for</span>-each-ref --format<span style="color:#f92672">=</span><span style="color:#d88200">&#39;delete %(refname)&#39;</span> refs/original</code></pre></div>
-<p>Dereference the objects by expiring the reflog and forcing GC.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git filter-branch --tree-filter <span style="color:#d88200">&#39;rm -rf dist&#39;</span> HEAD
+</code></pre></div><p>See if any objects in your repo are pointing to the dist. You should see your branch name in the output here.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git <span style="color:#00a8c8">for</span>-each-ref --format<span style="color:#f92672">=</span><span style="color:#d88200">&#39;delete %(refname)&#39;</span> refs/original
+</code></pre></div><p>Dereference the objects by expiring the reflog and forcing GC.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git <span style="color:#00a8c8">for</span>-each-ref --format<span style="color:#f92672">=</span><span style="color:#d88200">&#39;delete %(refname)&#39;</span> refs/original <span style="color:#111">|</span> git update-ref --stdin
 git reflog expire --expire<span style="color:#f92672">=</span>now --all
-git gc --prune<span style="color:#f92672">=</span>now</code></pre></div>
-<p>Force push the new master branch.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git push origin master --force</code></pre></div>
-<p>Now other developers will need to follow similar steps to get their branches up to date. They can checkout their working branch and follow steps above, but stop short of pushing their branches. These steps will remove the <code>dist</code> directory from history for them, but they will rewrite every SHA in the branch&rsquo;s history, so the new master branch and their branch will look different to git. To fix this, we&rsquo;ll cherry pick their commits onto a new branch.</p>
-
+git gc --prune<span style="color:#f92672">=</span>now
+</code></pre></div><p>Force push the new master branch.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git push origin master --force
+</code></pre></div><p>Now other developers will need to follow similar steps to get their branches up to date. They can checkout their working branch and follow steps above, but stop short of pushing their branches. These steps will remove the <code>dist</code> directory from history for them, but they will rewrite every SHA in the branch&rsquo;s history, so the new master branch and their branch will look different to git. To fix this, we&rsquo;ll cherry pick their commits onto a new branch.</p>
 <p>Use this command to find the range of SHAs you want to cherrypick. If you have more than 50 commits in your branch, you can drop the <code>-n 50</code> option. Copy the first and last SHAs of your work.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git log —pretty<span style="color:#f92672">=</span>oneline —graph —abbrev-commit -n <span style="color:#ae81ff">50</span></code></pre></div>
-<p>Start with the new history</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git checkout master</code></pre></div>
-<p>And branch off of that</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git checkout -b your-branch-new-history</code></pre></div>
-<p>And finally cherry-pick your commits onto your new branch</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git cherry-pick &lt;starting sha&gt;..&lt;ending sha&gt;</code></pre></div>
-<p>You can now remove your original working branch and push your new work up to GitHub. Once you&rsquo;ve fixed all your working branches, you can verify that the <code>dist</code> directory is no longer in your history by listing all files ever tracked by git, including deleted ones:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git log --pretty<span style="color:#f92672">=</span>format: --name-only --diff-filter<span style="color:#f92672">=</span>A <span style="color:#111">|</span> sort - <span style="color:#111">|</span> sed <span style="color:#d88200">&#39;/^$/d&#39;</span> <span style="color:#111">|</span> grep dist</code></pre></div>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git log —pretty<span style="color:#f92672">=</span>oneline —graph —abbrev-commit -n <span style="color:#ae81ff">50</span>
+</code></pre></div><p>Start with the new history</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git checkout master
+</code></pre></div><p>And branch off of that</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git checkout -b your-branch-new-history
+</code></pre></div><p>And finally cherry-pick your commits onto your new branch</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git cherry-pick &lt;starting sha&gt;..&lt;ending sha&gt;
+</code></pre></div><p>You can now remove your original working branch and push your new work up to GitHub. Once you&rsquo;ve fixed all your working branches, you can verify that the <code>dist</code> directory is no longer in your history by listing all files ever tracked by git, including deleted ones:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git log --pretty<span style="color:#f92672">=</span>format: --name-only --diff-filter<span style="color:#f92672">=</span>A <span style="color:#111">|</span> sort - <span style="color:#111">|</span> sed <span style="color:#d88200">&#39;/^$/d&#39;</span> <span style="color:#111">|</span> grep dist
+</code></pre></div>
 
 		
 	</div>
@@ -160,7 +151,7 @@ git gc --prune<span style="color:#f92672">=</span>now</code></pre></div>
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-12-16 06:04:29.195371 -0500 EST m=&#43;1.009913238">2019</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2021-03-24 20:49:08.287726 -0400 EDT m=&#43;0.096712376">2021</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

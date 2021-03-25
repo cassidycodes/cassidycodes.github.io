@@ -67,11 +67,10 @@
     <meta property="og:title" content="Developing with Kirby" />
 <meta property="og:description" content="I built a site with the Kirby CMS. Here&#39;s what I learned while doing it!" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://cassidy.codes/blog/2015/05/25/kirby-cms/" />
-
-<meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png" />
-<meta property="article:published_time" content="2015-05-25T00:00:00+00:00" />
+<meta property="og:url" content="https://cassidy.codes/blog/2015/05/25/kirby-cms/" /><meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2015-05-25T00:00:00&#43;00:00" />
 <meta property="article:modified_time" content="2019-12-14T11:46:46-05:00" /><meta property="og:site_name" content="Cassidy K" />
+
 
     <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/>
@@ -88,11 +87,7 @@
 				<a href="https://cassidy.codes/">
 					<h2 class="nav-title">Cassidy K</h2>
 				</a>
-				<ul>
-    <li><a href="https://github.com/cassidycodes">GitHub</a></li>
-    <li><a href="https://twitter.com/cassidycodes">Twitter</a></li>
-</ul>
-
+				
 			</div>
 		</nav>
 
@@ -112,54 +107,29 @@
 
 		
 
-		
-
-<p>A year or so ago, I taught myself PHP by way of WordPress. I didn&rsquo;t consider myself a developer, but I knew how to make things happen. When I learned Ruby on Rails, I was thrilled to realize that I actually understood the basic concepts of programming, and I picked up Ruby really quickly.</p>
-
+		<p>A year or so ago, I taught myself PHP by way of WordPress. I didn&rsquo;t consider myself a developer, but I knew how to make things happen. When I learned Ruby on Rails, I was thrilled to realize that I actually understood the basic concepts of programming, and I picked up Ruby really quickly.</p>
 <p>After learning Rails this winter, I was curious to see how much more I understood about PHP now that I had begun to work with Ruby, so I built a new site using <a href="http://getkirby.com">Kirby</a>. I&rsquo;ve loved working with Kirby. It&rsquo;s really easy to extend the app and it&rsquo;s API feels very natural.</p>
-
 <h2 id="no-database">No Database</h2>
-
 <p>By default, Kirby does not have a database. It&rsquo;s a file-based system, meaning that each page has a directory with a text files and images. This is not unlike <a href="http://jekyllrb.com/">Jekyll</a>, except that Kirby serves PHP, rather than static pages.</p>
-
 <p>This structure works nicely for simple sites but fortunately you can hook Kirby up to MySQL and Sqlite if you need.</p>
-
 <h2 id="vc">*VC</h2>
-
 <p>Learning Rails, I found the concept of MVC really helpful for understanding the roles of each part of the application. Kirby is not an MVC app, but it has some aspects of this.</p>
-
 <h3 id="models">Models</h3>
-
 <p>The closest thing you might find to a mole is the <code>blueprint</code>. Each template has a related <code>blueprint</code> that lays out the fields for this template. It also determines the layout of the page editor in the back end, called the Panel.</p>
-
 <p>However, Kirby can be run without the Panel and you could add any field to a page you like. You can also add any file to the page directory and it becomes part of that <code>$page</code> object, even if it is a a directory with another <code>$page</code> in it. So the &ldquo;model&rdquo; in Kirby is somewhere between the <code>blueprint</code> and the directory itself.</p>
-
 <h3 id="views">Views</h3>
-
 <p>Templates are Kirby&rsquo;s views. Kirby will check the name of the text file in a directory and go look for a template with the same name. If one doesn&rsquo;t exist, it&rsquo;ll use the <code>default.php</code> template. In the site that I made last week, I left much more logic in the templates than I am comfortable with. I&rsquo;ll have to refactor this to use the controllers instead.</p>
-
 <h3 id="controllers">Controllers</h3>
-
 <p>Kirby does have controllers. Although, I don&rsquo;t remember seeing this in earlier versions of the app. The <a href="https://github.com/ausminternet/blogprint">BlogPrint</a> plugin uses controllers to distinguish between <code>$pages</code> and <code>$posts</code>.</p>
-
 <p>Controllers are <a href="http://getkirby.com/docs/templates/controllers">documented in Kirby</a>, but many of the code examples in the docs or on the forum use quite a bit of logic in the templates.</p>
-
 <h3 id="helpers">Helpers</h3>
-
 <p>When Kirby loads it looks through the <code>/site/plugins</code> directory and loads any PHP files here. This is where you can place helper functions. Frankly, I&rsquo;d rather if there were two separate directories, &ldquo;Helpers&rdquo; and &ldquo;Plugins&rdquo;, or &ldquo;Vendor&rdquo;. To me, a helper is a function you write yourself for the web app you&rsquo;re building whereas a &ldquo;Plugin&rdquo; is third-party code that you&rsquo;re plugging into your app.</p>
-
 <p>In the site I made last week, I used the BlogPrint plugin, which uses a handful of helper functions to get post authors and meta data. I also wrote a method that collects images and puts them into a gallery using <a href="http://foundation.zurb.com/docs/components/clearing.html">Foundation&rsquo;s Clearing Lightbox</a></p>
-
 <h2 id="toolkit-api">Toolkit API</h2>
-
 <p>Kirby comes with a collection of functions that extend some basic PHP classes and give you a handful of useful helpers for working with PHP. The <a href="http://getkirby.com/docs/toolkit/api">docs on this are very limited</a>, but the source code is written very clearly.</p>
-
 <p>When I was writing a function to build an image gallery, I used the a couple of these helpers and when things didn&rsquo;t work as I expected, I just followed the string of functions to figure out what was going on. If I work on a non-Kirby related project in the future, I might want to use the Toolkit.</p>
-
 <h2 id="conclusion">Conclusion</h2>
-
 <p>I&rsquo;m excited about working with Kirby in the future. It looks like a really excellent choice for my freelance work. I sent the site I built to a friend who will be using it and she replied saying, &ldquo;I&rsquo;m LOVING working on this site. So logical and easy.&rdquo; I can&rsquo;t take credit for that. I laid out some of the back end pages, but Kirby&rsquo;s Panel just makes sense.</p>
-
 <p>I launched the new site this week because the charity I made it for is being featured in a news article, but I haven&rsquo;t finished working on it. At the moment it&rsquo;s using the base Foundation styles because I was focused on getting something functional out there for their publication deadline. I&rsquo;ll post a link to the site once it&rsquo;s done.</p>
 
 
@@ -177,7 +147,7 @@
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-12-16 06:04:29.200628 -0500 EST m=&#43;1.015170248">2019</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2021-03-24 20:49:08.275669 -0400 EDT m=&#43;0.084655012">2021</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 

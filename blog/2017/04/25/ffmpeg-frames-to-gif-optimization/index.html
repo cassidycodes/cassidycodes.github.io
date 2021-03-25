@@ -66,10 +66,10 @@
     <meta property="og:title" content="Optimizing GIFS with FFMPEG" />
 <meta property="og:description" content="A few months back I was working on an iOS app that delivered GIFs to users. The idea was that someone would visit one of our 3D photo booths, and get an animated avatar created. We could then render animation frames to PNGs using our custom software. The problem was that some of our animations were rather long, so we needed to crunch the gifs down to the smallest possible size." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://cassidy.codes/blog/2017/04/25/ffmpeg-frames-to-gif-optimization/" />
+<meta property="og:url" content="https://cassidy.codes/blog/2017/04/25/ffmpeg-frames-to-gif-optimization/" /><meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/><meta property="article:section" content="blog" />
 
-<meta property="og:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png" />
 <meta property="article:modified_time" content="2019-12-14T11:46:46-05:00" /><meta property="og:site_name" content="Cassidy K" />
+
 
     <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://cassidy.codes/favicon/apple-icon-180x180.png"/>
@@ -86,11 +86,7 @@
 				<a href="https://cassidy.codes/">
 					<h2 class="nav-title">Cassidy K</h2>
 				</a>
-				<ul>
-    <li><a href="https://github.com/cassidycodes">GitHub</a></li>
-    <li><a href="https://twitter.com/cassidycodes">Twitter</a></li>
-</ul>
-
+				
 			</div>
 		</nav>
 
@@ -108,14 +104,9 @@
 
 		
 
-		
-
-<p>A few months back I was working on an iOS app that delivered GIFs to users. The idea was that someone would visit one of our 3D photo booths, and get an animated avatar created. We could then render animation frames to PNGs using our custom software. The problem was that some of our animations were rather long, so we needed to crunch the gifs down to the smallest possible size.</p>
-
+		<p>A few months back I was working on an iOS app that delivered GIFs to users. The idea was that someone would visit one of our 3D photo booths, and get an animated avatar created. We could then render animation frames to PNGs using our custom software. The problem was that some of our animations were rather long, so we needed to crunch the gifs down to the smallest possible size.</p>
 <p>Before I dive in, I want to give big credit to the author of <a href="http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html">this post about high quality GIFs with FFMPEG</a>. I worked through their notes and dug deeper into FFMPEG docs to get the results here. If you&rsquo;re looking to convert movies to GIFs, check out that article.</p>
-
-<h2 id="tl-dr">TL;DR</h2>
-
+<h2 id="tldr">TL;DR</h2>
 <p>Here is my modified version of the script from the <a href="http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html">Usage</a> section of the above blog post. What follows in a brief explanation for those who have the patience for digging into FFMPEG.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/sh
 </span><span style="color:#75715e"></span>
@@ -125,52 +116,43 @@
 
 ffmpeg -v warning -i <span style="color:#111">$1</span> -vf <span style="color:#d88200">&#34;</span><span style="color:#111">$filters</span><span style="color:#d88200">,palettegen=stats_mode=diff&#34;</span> -y <span style="color:#111">$palette</span>
 
-ffmpeg -i <span style="color:#111">$1</span> -i <span style="color:#111">$palette</span> -lavfi <span style="color:#d88200">&#34;</span><span style="color:#111">$filters</span><span style="color:#d88200">,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle&#34;</span> -y <span style="color:#111">$2</span></code></pre></div>
-<h2 id="filtergraphs">Filtergraphs</h2>
-
+ffmpeg -i <span style="color:#111">$1</span> -i <span style="color:#111">$palette</span> -lavfi <span style="color:#d88200">&#34;</span><span style="color:#111">$filters</span><span style="color:#d88200">,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle&#34;</span> -y <span style="color:#111">$2</span>
+</code></pre></div><h2 id="filtergraphs">Filtergraphs</h2>
 <p>The filter options can get a little confusing. So here&rsquo;s a quick explanation of the Filtergraph Syntax.</p>
-
 <p>The basic values we&rsquo;re passing in with our <code>$filters</code> variable are structured like a nested key-value pairs. If a visual representation helps, we could represent this variable like so:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">fps<span style="color:#111">:</span> <span style="color:#ae81ff">15</span>
-scale<span style="color:#111">:</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">fps</span><span style="color:#111">:</span> <span style="color:#ae81ff">15</span>
+<span style="color:#f92672">scale</span><span style="color:#111">:</span>
   <span style="color:#111">[</span><span style="color:#ae81ff">320</span><span style="color:#111">,</span> -<span style="color:#ae81ff">1</span><span style="color:#111">]</span>
-  flags<span style="color:#111">:</span> <span style="color:#d88200">&#34;lanczos&#34;</span></code></pre></div>
-<p>When we add <code>,palettegen</code> on the end, we&rsquo;re just adding one more top level key to the filtergraph.</p>
-
+  <span style="color:#f92672">flags</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;lanczos&#34;</span>
+</code></pre></div><p>When we add <code>,palettegen</code> on the end, we&rsquo;re just adding one more top level key to the filtergraph.</p>
 <p>Things get a little more complex when we generate the GIF. Let&rsquo;s look at everything we pass in to the <code>-lavfi</code> option:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">fps<span style="color:#111">:</span> <span style="color:#ae81ff">15</span>
-scale<span style="color:#111">:</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">fps</span><span style="color:#111">:</span> <span style="color:#ae81ff">15</span>
+<span style="color:#f92672">scale</span><span style="color:#111">:</span>
   <span style="color:#111">[</span><span style="color:#ae81ff">320</span><span style="color:#111">,</span> -<span style="color:#ae81ff">1</span><span style="color:#111">]</span>
-  flags<span style="color:#111">:</span> <span style="color:#d88200">&#34;lanczos&#34;</span>
-paletteuse<span style="color:#111">:</span>
-  dither<span style="color:#111">:</span>
-    bayer_scale<span style="color:#111">:</span> <span style="color:#ae81ff">5</span>
-    diff_mode<span style="color:#111">:</span> rectangle</code></pre></div>
-<p>You can find a more detailed explanation of this in FFMPEG&rsquo;s <a href="http://www.ffmpeg.org/ffmpeg-filters.html#Filtering-Introduction.">Filtergraph Docs</a></p>
-
+  <span style="color:#f92672">flags</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;lanczos&#34;</span>
+<span style="color:#f92672">paletteuse</span><span style="color:#111">:</span>
+  <span style="color:#f92672">dither</span><span style="color:#111">:</span>
+    <span style="color:#f92672">bayer_scale</span><span style="color:#111">:</span> <span style="color:#ae81ff">5</span>
+    <span style="color:#f92672">diff_mode</span><span style="color:#111">:</span> <span style="color:#ae81ff">rectangle</span>
+</code></pre></div><p>You can find a more detailed explanation of this in FFMPEG&rsquo;s <a href="http://www.ffmpeg.org/ffmpeg-filters.html#Filtering-Introduction.">Filtergraph Docs</a></p>
 <h2 id="explanation-of-options">Explanation of Options</h2>
-
 <p>I won&rsquo;t go into each option we&rsquo;re passing to FFMPEG here, but there are a couple things that differ from the original blog post.</p>
-
 <ol>
-<li><p>Using <code>stats_mode=diff</code> when generating the palette. This will generate a smaller palette because FFMPEG will only look at the pixels that do not change from one frame to the next. I found that without this, some static pixels would still change colours ever so slightly between frames.</p></li>
-
-<li><p>Dithering with a <code>bayer_scale=5</code>. Have a look a the different options for dithering as they&rsquo;ll each have a different effect depending on your content. In our case, since the images were synthetic (i.e., not photographic), dithering using the Bayer algorithm worked quite nicely.</p></li>
-
-<li><p><code>diff_mode=rectangle</code> restricts area to only the regions where there is motion. This means that the areas without motion will remain the transparent from one frame to the next.</p></li>
+<li>
+<p>Using <code>stats_mode=diff</code> when generating the palette. This will generate a smaller palette because FFMPEG will only look at the pixels that do not change from one frame to the next. I found that without this, some static pixels would still change colours ever so slightly between frames.</p>
+</li>
+<li>
+<p>Dithering with a <code>bayer_scale=5</code>. Have a look a the different options for dithering as they&rsquo;ll each have a different effect depending on your content. In our case, since the images were synthetic (i.e., not photographic), dithering using the Bayer algorithm worked quite nicely.</p>
+</li>
+<li>
+<p><code>diff_mode=rectangle</code> restricts area to only the regions where there is motion. This means that the areas without motion will remain the transparent from one frame to the next.</p>
+</li>
 </ol>
-
 <h2 id="the-result">The Result</h2>
-
 <p>For our longer gifs, this method cut our file size down by about 40%. The image below works out to just 166K. We get a little bit of colour banding, but I think that&rsquo;s acceptable.</p>
-
-<p><img src="https://cassidy.codes/images/posts/gif-optimization/final.gif" alt="An animated GIF of my avatar doing a backflip." class="img-fluid mx-auto d-block"></p>
-
+<!-- raw HTML omitted -->
 <p>If you want to peak at the internals of a gif, you can use <code>gifsicle -e input.gif</code> to explode the frames. Here&rsquo;s the first three frames of the gif above. Notice that only the pixels that change from one frame to the next are present.</p>
-
-<p><img src="https://cassidy.codes/images/posts/gif-optimization/final.000.gif" alt="An animated GIF of my avatar doing a backflip." class="img-fluid mx-auto d-block">
-<img src="https://cassidy.codes/images/posts/gif-optimization/final.001.gif" alt="An animated GIF of my avatar doing a backflip." class="img-fluid mx-auto d-block">
-<img src="https://cassidy.codes/images/posts/gif-optimization/final.002.gif" alt="An animated GIF of my avatar doing a backflip." class="img-fluid mx-auto d-block"></p>
+<!-- raw HTML omitted -->
 
 
 		
@@ -186,7 +168,7 @@ paletteuse<span style="color:#111">:</span>
 
         		<footer>
 			<span>
-			&copy; <time datetime="2019-12-16 06:04:29.206385 -0500 EST m=&#43;1.020926244">2019</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2021-03-24 20:49:08.281997 -0400 EDT m=&#43;0.090983347">2021</time> Cassidy K. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
