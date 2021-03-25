@@ -2,9 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://cassidy.codes/</loc>
-    <lastmod>2019-12-14T11:46:46-05:00</lastmod>
-  </url><url>
     <loc>https://cassidy.codes/blog/</loc>
     <lastmod>2019-12-14T11:46:46-05:00</lastmod>
   </url><url>
@@ -70,6 +67,9 @@
   </url><url>
     <loc>https://cassidy.codes/blog/2015/01/26/arrays-vs-hashes-ruby/</loc>
     <lastmod>2019-01-05T22:27:33-05:00</lastmod>
+  </url><url>
+    <loc>https://cassidy.codes/</loc>
+    <lastmod>2021-03-25T07:58:31-04:00</lastmod>
   </url><url>
     <loc>https://cassidy.codes/blog/2017/04/25/ffmpeg-frames-to-gif-optimization/</loc>
     <lastmod>2019-12-14T11:46:46-05:00</lastmod>
